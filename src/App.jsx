@@ -7,6 +7,7 @@ import Reviews from "./components/Reviews";
 import Contact from "./components/Contact";
 import Footer from "./components/Footer";
 import TermsAndConditions from "./components/TermsAndConditions";
+import JobUpdates from "./components/JobUpdates";
 
 export default function App() {
   return (
@@ -15,6 +16,7 @@ export default function App() {
       <Hero />
       <About />
       <Services />
+      <JobUpdates />
       <Registration />
       <TermsAndConditions />
       <Reviews />
