@@ -120,7 +120,7 @@ export default function Footer() {
 
               <div className="flex items-center gap-3">
                 <FaEnvelope className="text-blue-400" />
-                <span>psconsultancy@gmail.com</span>
+                <span>psconsultancy98@gmail.com</span>
               </div>
 
               <div className="flex items-start gap-3">

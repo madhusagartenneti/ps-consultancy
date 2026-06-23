@@ -63,7 +63,7 @@ export default function Contact() {
               href="mailto:psconsultancy@gmail.com"
               className="text-slate-300 mt-3 block hover:text-yellow-300 break-all"
             >
-              psconsultancy@gmail.com
+              psconsultancy98@gmail.com
             </a>
           </div>
 
