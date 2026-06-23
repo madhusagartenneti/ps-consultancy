@@ -126,9 +126,9 @@ export default function Footer() {
               <div className="flex items-start gap-3">
                 <FaMapMarkerAlt className="text-blue-400 mt-1" />
                 <span>
-                  Visakhapatnam,
+                  Hyderabad,
                   <br />
-                  Andhra Pradesh, India
+                  Telangana, India
                 </span>
               </div>
             </div>
