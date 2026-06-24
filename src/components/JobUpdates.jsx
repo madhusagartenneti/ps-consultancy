@@ -84,10 +84,10 @@ export default function JobUpdates() {
 
   try {
     await fetch(
-      "https://script.google.com/macros/s/AKfycbz6g0KLNG4oHJPFSNX3AjtGPoZmdidxa-6Nu-XEwDSSp1Yh4G13z8y0PAP9cIV1v225/exec",
+      "https://script.google.com/macros/s/AKfycbxK6yKCBB2LATFWkk0_ggrfOb2gGCnFJU1caxqG-9-w4oHoDEFufacWHJHRGA9vUykh/exec",
       {
         method: "POST",
-        mode: "no-cors", // CORS ఎర్రర్ రాకుండా ఉండటానికి
+        // mode: "no-cors", 
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
         },
