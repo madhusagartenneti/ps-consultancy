@@ -26,8 +26,21 @@ export default function Registration() {
     });
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  try {
+    const response = await fetch(
+      "https://script.google.com/macros/s/AKfycbyzlShq1sL2MuxaTDpsY39vyd6zbNokAXC2GAaMN9rpZ_ZrVoTRGuJILPCOZX3GP8S2/exec",
+      {
+        method: "POST",
+        body: JSON.stringify(formData),
+      }
+    );
+
+    const data = await response.text();
+
+    console.log(data);
 
     alert("Registration Submitted Successfully!");
 
@@ -37,7 +50,11 @@ export default function Registration() {
       email: "",
       qualification: "",
     });
-  };
+  } catch (error) {
+    console.error(error);
+    alert("Something went wrong!");
+  }
+};
 
   const steps = [
     {
