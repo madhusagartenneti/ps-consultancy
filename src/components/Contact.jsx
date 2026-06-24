@@ -98,7 +98,7 @@ export default function Contact() {
             </h3>
 
             <p className="text-slate-300 mt-3">
-              Andhra Pradesh, India
+              Telangana, India
             </p>
           </div>
         </div>
