@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   FaBriefcase,
   FaMapMarkerAlt,
@@ -11,63 +11,99 @@ import {
   FaPhoneAlt,
   FaEnvelope,
   FaGraduationCap,
-  FaFileUpload,
 } from "react-icons/fa";
 
 export default function JobUpdates() {
+  const [loading, setLoading] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
   const [selectedJob, setSelectedJob] = useState("");
+  const [jobs, setJobs] = useState([]);
+  
+  const [formData, setFormData] = useState({
+    name: "",
+    phone: "",
+    email: "",
+    qualification: "",
+    experience: "",
+    location: "",
+    additionalInfo: "",
+  });
 
-  const jobs = [
-    {
-      title: "Data Entry Executive",
-      company: "Private Company",
-      location: "Hyderabad",
-      salary: "₹15,000 - ₹20,000",
-      experience: "0-1 Years",
-      type: "Full Time",
-    },
-    {
-      title: "HR Recruiter",
-      company: "IT Recruitment Firm",
-      location: "Hyderabad",
-      salary: "₹18,000 - ₹25,000",
-      experience: "1-3 Years",
-      type: "Full Time",
-    },
-    {
-      title: "Accountant",
-      company: "Manufacturing Company",
-      location: "Visakhapatnam",
-      salary: "₹20,000 - ₹30,000",
-      experience: "2-5 Years",
-      type: "Full Time",
-    },
-    {
-      title: "Administrative Assistant",
-      company: "Corporate Office",
-      location: "Bangalore",
-      salary: "₹18,000 - ₹28,000",
-      experience: "1-2 Years",
-      type: "Full Time",
-    },
-  ];
+  useEffect(() => {
+    fetch(
+      "https://script.google.com/macros/s/AKfycbyQ4t8A1SujGz2956X5_pfmLb5YeKrKu4BOIxDW7iXYQhkU_wwTua822ONQ-T5k4yzQqQ/exec"
+    )
+      .then((res) => res.json())
+      .then((data) => {
+        setJobs(data);
+      })
+      .catch((err) => {
+        console.error("Error fetching jobs:", err);
+      });
+  }, []);
+
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
 
   const handleApply = (jobTitle) => {
     setSelectedJob(jobTitle);
     setShowPopup(true);
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    alert(
-      `Application Submitted Successfully for ${selectedJob}!`
-    );
-
+  const closePopup = () => {
     setShowPopup(false);
+    setFormData({
+      name: "",
+      phone: "",
+      email: "",
+      qualification: "",
+      experience: "",
+      location: "",
+      additionalInfo: "",
+    });
   };
 
+ const handleSubmit = async (e) => {
+  e.preventDefault();
+  setLoading(true);
+
+  // ఫామ్ డేటాను గూగుల్ స్క్రిప్ట్ కి అర్థమయ్యేలా మార్చడం
+  const formDataBody = new URLSearchParams();
+  formDataBody.append("jobTitle", selectedJob);
+  formDataBody.append("name", formData.name);
+  formDataBody.append("phone", formData.phone);
+  formDataBody.append("email", formData.email);
+  formDataBody.append("qualification", formData.qualification);
+  formDataBody.append("experience", formData.experience);
+  formDataBody.append("location", formData.location);
+  formDataBody.append("additionalInfo", formData.additionalInfo);
+
+  try {
+    await fetch(
+      "https://script.google.com/macros/s/AKfycbz6g0KLNG4oHJPFSNX3AjtGPoZmdidxa-6Nu-XEwDSSp1Yh4G13z8y0PAP9cIV1v225/exec",
+      {
+        method: "POST",
+        mode: "no-cors", // CORS ఎర్రర్ రాకుండా ఉండటానికి
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: formDataBody.toString(),
+      }
+    );
+
+    alert("Application Submitted Successfully!");
+    closePopup();
+  } catch (error) {
+    console.error("Submission Error:", error);
+    alert("Submission Failed!");
+  } finally {
+    setLoading(false);
+  }
+};
   return (
     <>
       <section
@@ -80,14 +116,11 @@ export default function JobUpdates() {
             <span className="inline-block bg-blue-100 text-blue-700 px-4 py-2 rounded-full font-semibold text-sm md:text-base">
               Latest Job Openings
             </span>
-
             <h2 className="text-3xl md:text-5xl font-bold text-slate-900 mt-5">
               Job Updates
             </h2>
-
             <p className="text-slate-600 text-base md:text-lg mt-4 max-w-3xl mx-auto">
-              Explore the latest job opportunities available through
-              PS Consultancy and apply today.
+              Explore the latest job opportunities available through PS Consultancy and apply today.
             </p>
           </div>
 
@@ -107,7 +140,6 @@ export default function JobUpdates() {
                 <h3 className="text-xl md:text-2xl font-bold text-slate-900">
                   {job.title}
                 </h3>
-
                 <p className="text-blue-600 font-semibold mt-2 text-sm md:text-base">
                   {job.company}
                 </p>
@@ -118,17 +150,14 @@ export default function JobUpdates() {
                     <FaMapMarkerAlt className="text-red-500" />
                     <span>{job.location}</span>
                   </div>
-
                   <div className="flex items-center gap-3 text-slate-600">
                     <FaMoneyBillWave className="text-green-500" />
                     <span>{job.salary}</span>
                   </div>
-
                   <div className="flex items-center gap-3 text-slate-600">
                     <FaUserTie className="text-blue-500" />
                     <span>{job.experience}</span>
                   </div>
-
                   <div className="flex items-center gap-3 text-slate-600">
                     <FaClock className="text-orange-500" />
                     <span>{job.type}</span>
@@ -153,11 +182,10 @@ export default function JobUpdates() {
       {showPopup && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-3xl w-full max-w-2xl p-8 relative shadow-2xl max-h-[90vh] overflow-y-auto">
-
             {/* Close Button */}
             <button
-              onClick={() => setShowPopup(false)}
-              className="absolute top-5 right-5 text-2xl text-gray-500 hover:text-red-500"
+              onClick={closePopup}
+              className="absolute top-5 right-5 text-2xl text-gray-500 hover:text-red-500 transition-colors"
             >
               <FaTimes />
             </button>
@@ -167,24 +195,23 @@ export default function JobUpdates() {
               <h2 className="text-3xl font-bold text-slate-900">
                 Apply For Job
               </h2>
-
               <p className="text-blue-600 font-semibold mt-2">
                 Position: {selectedJob}
               </p>
             </div>
 
             {/* Form */}
-            <form
-              onSubmit={handleSubmit}
-              className="grid md:grid-cols-2 gap-5"
-            >
+            <form onSubmit={handleSubmit} className="grid md:grid-cols-2 gap-5">
               <div className="relative">
                 <FaUser className="absolute top-4 left-4 text-gray-400" />
                 <input
                   type="text"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleChange}
                   placeholder="Full Name"
                   required
-                  className="w-full border rounded-xl py-3 pl-12 pr-4"
+                  className="w-full border rounded-xl py-3 pl-12 pr-4 outline-none focus:border-blue-500"
                 />
               </div>
 
@@ -192,9 +219,12 @@ export default function JobUpdates() {
                 <FaPhoneAlt className="absolute top-4 left-4 text-gray-400" />
                 <input
                   type="tel"
+                  name="phone"
+                  value={formData.phone}
+                  onChange={handleChange}
                   placeholder="Phone Number"
                   required
-                  className="w-full border rounded-xl py-3 pl-12 pr-4"
+                  className="w-full border rounded-xl py-3 pl-12 pr-4 outline-none focus:border-blue-500"
                 />
               </div>
 
@@ -202,9 +232,12 @@ export default function JobUpdates() {
                 <FaEnvelope className="absolute top-4 left-4 text-gray-400" />
                 <input
                   type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
                   placeholder="Email Address"
                   required
-                  className="w-full border rounded-xl py-3 pl-12 pr-4"
+                  className="w-full border rounded-xl py-3 pl-12 pr-4 outline-none focus:border-blue-500"
                 />
               </div>
 
@@ -212,48 +245,48 @@ export default function JobUpdates() {
                 <FaGraduationCap className="absolute top-4 left-4 text-gray-400" />
                 <input
                   type="text"
+                  name="qualification"
+                  value={formData.qualification}
+                  onChange={handleChange}
                   placeholder="Qualification"
                   required
-                  className="w-full border rounded-xl py-3 pl-12 pr-4"
+                  className="w-full border rounded-xl py-3 pl-12 pr-4 outline-none focus:border-blue-500"
                 />
               </div>
 
               <input
                 type="text"
+                name="experience"
+                value={formData.experience}
+                onChange={handleChange}
                 placeholder="Experience"
-                className="w-full border rounded-xl py-3 px-4"
+                className="w-full border rounded-xl py-3 px-4 outline-none focus:border-blue-500"
               />
 
               <input
                 type="text"
+                name="location"
+                value={formData.location}
+                onChange={handleChange}
                 placeholder="Current Location"
-                className="w-full border rounded-xl py-3 px-4"
+                className="w-full border rounded-xl py-3 px-4 outline-none focus:border-blue-500"
               />
-
-              <div className="md:col-span-2">
-                <label className="flex items-center gap-2 font-medium mb-2">
-                  <FaFileUpload />
-                  Upload Resume
-                </label>
-
-                <input
-                  type="file"
-                  accept=".pdf,.doc,.docx"
-                  className="w-full border rounded-xl p-3"
-                />
-              </div>
 
               <textarea
                 rows="4"
+                name="additionalInfo"
+                value={formData.additionalInfo}
+                onChange={handleChange}
                 placeholder="Additional Information"
-                className="md:col-span-2 border rounded-xl p-4"
+                className="md:col-span-2 border rounded-xl p-4 outline-none focus:border-blue-500"
               />
 
               <button
                 type="submit"
-                className="md:col-span-2 bg-blue-600 hover:bg-blue-700 text-white py-4 rounded-xl font-semibold text-lg"
+                disabled={loading}
+                className="md:col-span-2 bg-blue-600 hover:bg-blue-700 text-white py-4 rounded-xl font-semibold text-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all"
               >
-                Submit Application
+                {loading ? "Submitting..." : "Submit Application"}
               </button>
             </form>
           </div>
