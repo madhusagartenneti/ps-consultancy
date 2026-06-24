@@ -29,6 +29,7 @@ export default function JobUpdates() {
     additionalInfo: "",
   });
 
+  // Jobs data fetch cheయడానికి
   useEffect(() => {
     fetch(
       "https://script.google.com/macros/s/AKfycbyQ4t8A1SujGz2956X5_pfmLb5YeKrKu4BOIxDW7iXYQhkU_wwTua822ONQ-T5k4yzQqQ/exec"
@@ -67,43 +68,44 @@ export default function JobUpdates() {
     });
   };
 
- const handleSubmit = async (e) => {
-  e.preventDefault();
-  setLoading(true);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
 
-  // ఫామ్ డేటాను గూగుల్ స్క్రిప్ట్ కి అర్థమయ్యేలా మార్చడం
-  const formDataBody = new URLSearchParams();
-  formDataBody.append("jobTitle", selectedJob);
-  formDataBody.append("name", formData.name);
-  formDataBody.append("phone", formData.phone);
-  formDataBody.append("email", formData.email);
-  formDataBody.append("qualification", formData.qualification);
-  formDataBody.append("experience", formData.experience);
-  formDataBody.append("location", formData.location);
-  formDataBody.append("additionalInfo", formData.additionalInfo);
+    const formDataBody = new URLSearchParams();
+    formDataBody.append("jobTitle", selectedJob);
+    formDataBody.append("name", formData.name);
+    formDataBody.append("phone", formData.phone);
+    formDataBody.append("email", formData.email);
+    formDataBody.append("qualification", formData.qualification);
+    formDataBody.append("experience", formData.experience);
+    formDataBody.append("location", formData.location);
+    formDataBody.append("additionalInfo", formData.additionalInfo);
 
-  try {
-    await fetch(
-      "https://script.google.com/macros/s/AKfycbxK6yKCBB2LATFWkk0_ggrfOb2gGCnFJU1caxqG-9-w4oHoDEFufacWHJHRGA9vUykh/exec",
-      {
-        method: "POST",
-        // mode: "no-cors", 
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-        body: formDataBody.toString(),
-      }
-    );
+    try {
+      // ⚠️ MUKHYAM: Paina copy chesina kotha Apps Script Web App URL ni ikkada pettandi
+      await fetch(
+        "https://script.google.com/macros/s/AKfycbxK6yKCBB2LATFWkk0_ggrfOb2gGCnFJU1caxqG-9-w4oHoDEFufacWHJHRGA9vUykh/exec",
+        {
+          method: "POST",
+          mode: "no-cors", // CORS error raకుండా ఉండటానికి ఇది చాలా ముఖ్యం
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+          body: formDataBody.toString(),
+        }
+      );
 
-    alert("Application Submitted Successfully!");
-    closePopup();
-  } catch (error) {
-    console.error("Submission Error:", error);
-    alert("Submission Failed!");
-  } finally {
-    setLoading(false);
-  }
-};
+      alert("Application Submitted Successfully!");
+      closePopup();
+    } catch (error) {
+      console.error("Submission Error:", error);
+      alert("Submission Failed!");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <>
       <section
@@ -111,7 +113,6 @@ export default function JobUpdates() {
         className="py-16 md:py-24 bg-gradient-to-b from-white to-blue-50 overflow-hidden"
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
-          {/* Heading */}
           <div className="text-center mb-12 md:mb-16">
             <span className="inline-block bg-blue-100 text-blue-700 px-4 py-2 rounded-full font-semibold text-sm md:text-base">
               Latest Job Openings
@@ -131,12 +132,10 @@ export default function JobUpdates() {
                 key={index}
                 className="bg-white rounded-3xl shadow-lg border border-slate-100 p-6 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 h-full flex flex-col"
               >
-                {/* Icon */}
                 <div className="w-14 h-14 md:w-16 md:h-16 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center text-2xl md:text-3xl mb-5">
                   <FaBriefcase />
                 </div>
 
-                {/* Title */}
                 <h3 className="text-xl md:text-2xl font-bold text-slate-900">
                   {job.title}
                 </h3>
@@ -144,7 +143,6 @@ export default function JobUpdates() {
                   {job.company}
                 </p>
 
-                {/* Details */}
                 <div className="mt-5 space-y-4 flex-1">
                   <div className="flex items-center gap-3 text-slate-600">
                     <FaMapMarkerAlt className="text-red-500" />
@@ -164,7 +162,6 @@ export default function JobUpdates() {
                   </div>
                 </div>
 
-                {/* Apply Button */}
                 <button
                   onClick={() => handleApply(job.title)}
                   className="mt-6 w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-2xl font-semibold flex items-center justify-center gap-2 transition-all duration-300"
@@ -182,7 +179,6 @@ export default function JobUpdates() {
       {showPopup && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-3xl w-full max-w-2xl p-8 relative shadow-2xl max-h-[90vh] overflow-y-auto">
-            {/* Close Button */}
             <button
               onClick={closePopup}
               className="absolute top-5 right-5 text-2xl text-gray-500 hover:text-red-500 transition-colors"
@@ -190,7 +186,6 @@ export default function JobUpdates() {
               <FaTimes />
             </button>
 
-            {/* Header */}
             <div className="text-center mb-8">
               <h2 className="text-3xl font-bold text-slate-900">
                 Apply For Job
@@ -200,7 +195,6 @@ export default function JobUpdates() {
               </p>
             </div>
 
-            {/* Form */}
             <form onSubmit={handleSubmit} className="grid md:grid-cols-2 gap-5">
               <div className="relative">
                 <FaUser className="absolute top-4 left-4 text-gray-400" />
@@ -256,7 +250,7 @@ export default function JobUpdates() {
 
               <input
                 type="text"
-                name="experience"
+                name="experience" // name attribute add chesa
                 value={formData.experience}
                 onChange={handleChange}
                 placeholder="Experience"
@@ -265,7 +259,7 @@ export default function JobUpdates() {
 
               <input
                 type="text"
-                name="location"
+                name="location" // name attribute add chesa
                 value={formData.location}
                 onChange={handleChange}
                 placeholder="Current Location"
