@@ -29,7 +29,7 @@ export default function JobUpdates() {
     additionalInfo: "",
   });
 
-  // Jobs data fetch చేయడానికి
+  // Jobs data fetch చేయడానికి (ఇది అలాగే ఉంచబడింది)
   useEffect(() => {
     fetch(
       "https://script.google.com/macros/s/AKfycbyQ4t8A1SujGz2956X5_pfmLb5YeKrKu4BOIxDW7iXYQhkU_wwTua822ONQ-T5k4yzQqQ/exec"
@@ -68,39 +68,11 @@ export default function JobUpdates() {
     });
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     setLoading(true);
 
-    try {
-      // 1. గూగుల్ స్క్రిప్ట్‌కు డేటా పంపడానికి ప్రయత్నిస్తుంది
-      const formDataBody = new URLSearchParams();
-      formDataBody.append("jobTitle", selectedJob);
-      formDataBody.append("name", formData.name);
-      formDataBody.append("phone", formData.phone);
-      formDataBody.append("email", formData.email);
-      formDataBody.append("qualification", formData.qualification);
-      formDataBody.append("experience", formData.experience);
-      formDataBody.append("location", formData.location);
-      formDataBody.append("additionalInfo", formData.additionalInfo);
-
-      await fetch(
-        "https://script.google.com/macros/s/AKfycbxK6yKCBB2LATFWkk0_ggrfOb2gGCnFJU1caxqG-9-w4oHoDEFufacWHJHRGA9vUykh/exec",
-        {
-          method: "POST",
-          mode: "no-cors",
-          headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
-          },
-          body: formDataBody.toString(),
-        }
-      );
-    } catch (error) {
-      console.error("Google Sheets Submission Error:", error);
-      // బ్యాకెండ్‌లో ఎర్రర్ వచ్చినా వాట్సాప్ మెసేజ్ వెళ్తుంది
-    }
-
-    // 2. వాట్సాప్ మెసేజ్ పంపే ప్రాసెస్ (డేటా సేవ్ అవ్వకపోయినా ఇది పనిచేస్తుంది)
+    // వాట్సాప్ నంబర్ మరియు మెసేజ్ ఫార్మాట్
     const whatsappNumber = "918074291374"; 
     const message = `*New Job Application Details*\n\n` +
                     `*Job Position:* ${selectedJob}\n` +
@@ -115,11 +87,10 @@ export default function JobUpdates() {
     // URL encoded format లోకి మార్చడానికి
     const whatsappUrl = `https://api.whatsapp.com/send?phone=${whatsappNumber}&text=${encodeURIComponent(message)}`;
     
-    // కొత్త టాబ్‌లో వాట్సాప్ ఓపెన్ అవుతుంది
+    // కొత్త టాబ్‌లో నేరుగా వాట్సాప్ ఓపెన్ అవుతుంది
     window.open(whatsappUrl, "_blank");
 
     setLoading(false);
-    alert("Redirecting to WhatsApp to complete your application!");
     closePopup();
   };
 
@@ -297,7 +268,7 @@ export default function JobUpdates() {
                 disabled={loading}
                 className="md:col-span-2 bg-blue-600 hover:bg-blue-700 text-white py-4 rounded-xl font-semibold text-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all"
               >
-                {loading ? "Submitting..." : "Submit & Send WhatsApp"}
+                Send WhatsApp Message
               </button>
             </form>
           </div>
