@@ -29,7 +29,7 @@ export default function JobUpdates() {
     additionalInfo: "",
   });
 
-  // Jobs data fetch cheయడానికి
+  // Jobs data fetch చేయడానికి
   useEffect(() => {
     fetch(
       "https://script.google.com/macros/s/AKfycbyQ4t8A1SujGz2956X5_pfmLb5YeKrKu4BOIxDW7iXYQhkU_wwTua822ONQ-T5k4yzQqQ/exec"
@@ -72,38 +72,55 @@ export default function JobUpdates() {
     e.preventDefault();
     setLoading(true);
 
-    const formDataBody = new URLSearchParams();
-    formDataBody.append("jobTitle", selectedJob);
-    formDataBody.append("name", formData.name);
-    formDataBody.append("phone", formData.phone);
-    formDataBody.append("email", formData.email);
-    formDataBody.append("qualification", formData.qualification);
-    formDataBody.append("experience", formData.experience);
-    formDataBody.append("location", formData.location);
-    formDataBody.append("additionalInfo", formData.additionalInfo);
-
     try {
-      // ⚠️ MUKHYAM: Paina copy chesina kotha Apps Script Web App URL ni ikkada pettandi
+      // 1. గూగుల్ స్క్రిప్ట్‌కు డేటా పంపడానికి ప్రయత్నిస్తుంది
+      const formDataBody = new URLSearchParams();
+      formDataBody.append("jobTitle", selectedJob);
+      formDataBody.append("name", formData.name);
+      formDataBody.append("phone", formData.phone);
+      formDataBody.append("email", formData.email);
+      formDataBody.append("qualification", formData.qualification);
+      formDataBody.append("experience", formData.experience);
+      formDataBody.append("location", formData.location);
+      formDataBody.append("additionalInfo", formData.additionalInfo);
+
       await fetch(
         "https://script.google.com/macros/s/AKfycbxK6yKCBB2LATFWkk0_ggrfOb2gGCnFJU1caxqG-9-w4oHoDEFufacWHJHRGA9vUykh/exec",
         {
           method: "POST",
-          mode: "no-cors", // CORS error raకుండా ఉండటానికి ఇది చాలా ముఖ్యం
+          mode: "no-cors",
           headers: {
             "Content-Type": "application/x-www-form-urlencoded",
           },
           body: formDataBody.toString(),
         }
       );
-
-      alert("Application Submitted Successfully!");
-      closePopup();
     } catch (error) {
-      console.error("Submission Error:", error);
-      alert("Submission Failed!");
-    } finally {
-      setLoading(false);
+      console.error("Google Sheets Submission Error:", error);
+      // బ్యాకెండ్‌లో ఎర్రర్ వచ్చినా వాట్సాప్ మెసేజ్ వెళ్తుంది
     }
+
+    // 2. వాట్సాప్ మెసేజ్ పంపే ప్రాసెస్ (డేటా సేవ్ అవ్వకపోయినా ఇది పనిచేస్తుంది)
+    const whatsappNumber = "918074291374"; 
+    const message = `*New Job Application Details*\n\n` +
+                    `*Job Position:* ${selectedJob}\n` +
+                    `*Full Name:* ${formData.name}\n` +
+                    `*Phone:* ${formData.phone}\n` +
+                    `*Email:* ${formData.email}\n` +
+                    `*Qualification:* ${formData.qualification}\n` +
+                    `*Experience:* ${formData.experience || 'N/A'}\n` +
+                    `*Location:* ${formData.location || 'N/A'}\n` +
+                    `*Additional Info:* ${formData.additionalInfo || 'N/A'}`;
+
+    // URL encoded format లోకి మార్చడానికి
+    const whatsappUrl = `https://api.whatsapp.com/send?phone=${whatsappNumber}&text=${encodeURIComponent(message)}`;
+    
+    // కొత్త టాబ్‌లో వాట్సాప్ ఓపెన్ అవుతుంది
+    window.open(whatsappUrl, "_blank");
+
+    setLoading(false);
+    alert("Redirecting to WhatsApp to complete your application!");
+    closePopup();
   };
 
   return (
@@ -250,7 +267,7 @@ export default function JobUpdates() {
 
               <input
                 type="text"
-                name="experience" // name attribute add chesa
+                name="experience"
                 value={formData.experience}
                 onChange={handleChange}
                 placeholder="Experience"
@@ -259,7 +276,7 @@ export default function JobUpdates() {
 
               <input
                 type="text"
-                name="location" // name attribute add chesa
+                name="location"
                 value={formData.location}
                 onChange={handleChange}
                 placeholder="Current Location"
@@ -280,7 +297,7 @@ export default function JobUpdates() {
                 disabled={loading}
                 className="md:col-span-2 bg-blue-600 hover:bg-blue-700 text-white py-4 rounded-xl font-semibold text-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all"
               >
-                {loading ? "Submitting..." : "Submit Application"}
+                {loading ? "Submitting..." : "Submit & Send WhatsApp"}
               </button>
             </form>
           </div>
